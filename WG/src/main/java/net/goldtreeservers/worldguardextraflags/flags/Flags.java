@@ -56,8 +56,6 @@ public final class Flags
 
 	public final static ForcedStateFlag GLIDE = new ForcedStateFlag("glide");
 	
-	public final static StateFlag CHUNK_UNLOAD = new StateFlag("chunk-unload", true);
-	
 	public final static StateFlag ITEM_DURABILITY = new StateFlag("item-durability", true);
 	
 	public final static LocationFlag JOIN_LOCATION = new LocationFlag("join-location");

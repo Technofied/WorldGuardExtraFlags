@@ -83,7 +83,6 @@ public class WorldGuardExtraFlagsPlugin extends JavaPlugin
 			flagRegistry.register(Flags.FROSTWALKER);
 			flagRegistry.register(Flags.NETHER_PORTALS);
 			flagRegistry.register(Flags.GLIDE);
-			flagRegistry.register(Flags.CHUNK_UNLOAD);
 			flagRegistry.register(Flags.ITEM_DURABILITY);
 			flagRegistry.register(Flags.JOIN_LOCATION);
 		}
@@ -134,7 +133,6 @@ public class WorldGuardExtraFlagsPlugin extends JavaPlugin
 
 		this.getServer().getPluginManager().registerEvents(new PlayerListener(this, this.worldGuardPlugin, this.regionContainer, this.sessionManager), this);
 		this.getServer().getPluginManager().registerEvents(new BlockListener(this.worldGuardPlugin, this.regionContainer, this.sessionManager), this);
-		this.getServer().getPluginManager().registerEvents(new WorldListener(this, this.regionContainer), this);
 		this.getServer().getPluginManager().registerEvents(new EntityListener(this.worldGuardPlugin, this.regionContainer, this.sessionManager), this);
 
 		this.worldEditPlugin.getWorldEdit().getEventBus().register(new WorldEditListener(this.worldGuardPlugin, this.regionContainer, this.sessionManager));
@@ -154,42 +152,11 @@ public class WorldGuardExtraFlagsPlugin extends JavaPlugin
 		{
 			this.getServer().getPluginManager().registerEvents(new EntityPotionEffectEventListener(this.worldGuardPlugin, this.sessionManager), this);
 		}
-		
-		for(World world : this.getServer().getWorlds())
-		{
-			this.doUnloadChunkFlagCheck(world);
-		}
+
 		
 		this.setupMetrics();
 	}
 
-	public void doUnloadChunkFlagCheck(org.bukkit.World world)
-	{
-		RegionManager regionManager = this.regionContainer.get(BukkitAdapter.adapt(world));
-		if (regionManager == null)
-		{
-			return;
-		}
-
-		for (ProtectedRegion region : regionManager.getRegions().values())
-		{
-			if (region.getFlag(Flags.CHUNK_UNLOAD) == StateFlag.State.DENY)
-			{
-				this.getLogger().info("Loading chunks for region " + region.getId() + " located in " + world.getName() + " due to chunk-unload flag being deny");
-
-				BlockVector3 min = region.getMinimumPoint();
-				BlockVector3 max = region.getMaximumPoint();
-
-				for(int x = min.getBlockX() >> 4; x <= max.getBlockX() >> 4; x++)
-				{
-					for(int z = min.getBlockZ() >> 4; z <= max.getBlockZ() >> 4; z++)
-					{
-						world.getChunkAt(x, z).addPluginChunkTicket(this);
-					}
-				}
-			}
-		}
-	}
 	
 	private void setupMetrics()
 	{
