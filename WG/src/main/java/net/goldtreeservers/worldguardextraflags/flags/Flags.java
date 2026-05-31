@@ -2,7 +2,6 @@ package net.goldtreeservers.worldguardextraflags.flags;
 
 import net.goldtreeservers.worldguardextraflags.flags.helpers.*;
 import org.bukkit.Material;
-import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import com.sk89q.worldguard.protection.flags.BooleanFlag;
@@ -43,8 +42,6 @@ public final class Flags
 	public final static LocationFlag RESPAWN_LOCATION = new LocationFlag("respawn-location");
 	
 	public final static StateFlag WORLDEDIT = new StateFlag("worldedit", true);
-	
-	public final static SetFlag<PotionEffect> GIVE_EFFECTS = new SetFlag("give-effects", new PotionEffectFlag(null));
 	
 	public final static StateFlag FLY = new StateFlag("fly", false);
 	

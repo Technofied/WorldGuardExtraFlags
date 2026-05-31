@@ -19,7 +19,7 @@ import net.goldtreeservers.worldguardextraflags.listeners.*;
 import net.goldtreeservers.worldguardextraflags.wg.handlers.*;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.World;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -27,8 +27,6 @@ import com.sk89q.worldguard.protection.flags.Flag;
 
 import lombok.Getter;
 import net.goldtreeservers.worldguardextraflags.flags.Flags;
-import net.goldtreeservers.worldguardextraflags.protocollib.ProtocolLibHelper;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public class WorldGuardExtraFlagsPlugin extends JavaPlugin
 {
@@ -42,8 +40,6 @@ public class WorldGuardExtraFlagsPlugin extends JavaPlugin
 
 	@Getter private RegionContainer regionContainer;
 	@Getter private SessionManager sessionManager;
-
-	@Getter private ProtocolLibHelper protocolLibHelper;
 	
 	public WorldGuardExtraFlagsPlugin()
 	{
@@ -76,7 +72,6 @@ public class WorldGuardExtraFlagsPlugin extends JavaPlugin
 			flagRegistry.register(Flags.GODMODE);
 			flagRegistry.register(Flags.RESPAWN_LOCATION);
 			flagRegistry.register(Flags.WORLDEDIT);
-			flagRegistry.register(Flags.GIVE_EFFECTS);
 			flagRegistry.register(Flags.FLY);
 			flagRegistry.register(Flags.FLY_SPEED);
 			flagRegistry.register(Flags.PLAY_SOUNDS);
@@ -93,18 +88,6 @@ public class WorldGuardExtraFlagsPlugin extends JavaPlugin
 			throw new RuntimeException(e instanceof IllegalStateException ?
 					"WorldGuard prevented flag registration. Did you reload the plugin? This is not supported!" :
 					"Flag registration failed!", e);
-		}
-		
-		try
-		{
-			Plugin protocolLibPlugin = this.getServer().getPluginManager().getPlugin("ProtocolLib");
-			if (protocolLibPlugin != null)
-			{
-				this.protocolLibHelper = new ProtocolLibHelper(this, protocolLibPlugin);
-			}
-		}
-		catch(Throwable ignore)
-		{
 		}
 	}
 	
@@ -124,7 +107,6 @@ public class WorldGuardExtraFlagsPlugin extends JavaPlugin
 		this.sessionManager.registerHandler(GodmodeFlagHandler.FACTORY(), null);
 		this.sessionManager.registerHandler(PlaySoundsFlagHandler.FACTORY(plugin), null);
 		this.sessionManager.registerHandler(BlockedEffectsFlagHandler.FACTORY(), null);
-		this.sessionManager.registerHandler(GiveEffectsFlagHandler.FACTORY(), null);
 
 		this.sessionManager.registerHandler(CommandOnEntryFlagHandler.FACTORY(), null);
 		this.sessionManager.registerHandler(CommandOnExitFlagHandler.FACTORY(), null);
@@ -136,24 +118,7 @@ public class WorldGuardExtraFlagsPlugin extends JavaPlugin
 		this.getServer().getPluginManager().registerEvents(new EntityListener(this.worldGuardPlugin, this.regionContainer, this.sessionManager), this);
 
 		this.worldEditPlugin.getWorldEdit().getEventBus().register(new WorldEditListener(this.worldGuardPlugin, this.regionContainer, this.sessionManager));
-		
-		if (this.protocolLibHelper != null)
-		{
-			try
-			{
-				this.protocolLibHelper.onEnable();
-			}
-			catch (Throwable ignore)
-			{
-				this.getServer().getPluginManager().registerEvents(new EntityPotionEffectEventListener(this.worldGuardPlugin, this.sessionManager), this);
-			}
-		}
-		else
-		{
-			this.getServer().getPluginManager().registerEvents(new EntityPotionEffectEventListener(this.worldGuardPlugin, this.sessionManager), this);
-		}
 
-		
 		this.setupMetrics();
 	}
 

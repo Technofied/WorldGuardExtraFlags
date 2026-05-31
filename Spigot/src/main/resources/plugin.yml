@@ -8,6 +8,5 @@ author: isokissa3
 website: https://joniaromaa.fi
 
 depend: [ WorldGuard ]
-softdepend: [ ProtocolLib ]
 
 main: net.goldtreeservers.worldguardextraflags.WorldGuardExtraFlagsPlugin
