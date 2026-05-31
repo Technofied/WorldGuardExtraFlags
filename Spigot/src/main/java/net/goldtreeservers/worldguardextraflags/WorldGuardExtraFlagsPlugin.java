@@ -79,6 +79,7 @@ public class WorldGuardExtraFlagsPlugin extends JavaPlugin
 			flagRegistry.register(Flags.NETHER_PORTALS);
 			flagRegistry.register(Flags.GLIDE);
 			flagRegistry.register(Flags.ITEM_DURABILITY);
+			flagRegistry.register(Flags.CHESTSHOP_TRANSACT);
 			flagRegistry.register(Flags.JOIN_LOCATION);
 		}
 		catch (Exception e)
@@ -118,6 +119,11 @@ public class WorldGuardExtraFlagsPlugin extends JavaPlugin
 		this.getServer().getPluginManager().registerEvents(new EntityListener(this.worldGuardPlugin, this.regionContainer, this.sessionManager), this);
 
 		this.worldEditPlugin.getWorldEdit().getEventBus().register(new WorldEditListener(this.worldGuardPlugin, this.regionContainer, this.sessionManager));
+
+		if (this.getServer().getPluginManager().getPlugin("ChestShop") != null)
+		{
+			this.getServer().getPluginManager().registerEvents(new ChestShopListener(this.worldGuardPlugin, this.regionContainer, this.sessionManager), this);
+		}
 
 		this.setupMetrics();
 	}
